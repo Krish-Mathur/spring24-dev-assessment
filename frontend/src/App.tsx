@@ -1,9 +1,12 @@
+import React from 'react';
+import VolunteerTable from './VolunteerTable';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <p>Hello World!</p>
+      <h1>Volunteer Information</h1>
+      <VolunteerTable />
     </div>
   );
 }

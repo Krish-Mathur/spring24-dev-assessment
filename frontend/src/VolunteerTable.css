@@ -1,0 +1,20 @@
+.table-container {
+    max-width: 800;
+    margin: auto;
+}
+
+.volunteer-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.volunteer-table th, .volunteer-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;;
+}
+
+.volunteer-table th {
+    background-color: #f2f2f2;
+}
