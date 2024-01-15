@@ -43,46 +43,11 @@ const VolunteerTable: React.FC = () => {
         fetchData();
     }, []);
 
-    const handleAddVolunteer = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddVolunteer = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Adding Volunteer...', newVolunteer);
-        setVolunteers(prevVolunteers => [...prevVolunteers, { ...newVolunteer, id: String(Date.now()) }]);
-        setNewVolunteer({
-            name: '',
-            avatar: '',
-            hero_project: '',
-            notes: '',
-            email: '',
-            phone: '',
-            rating: '',
-            status: false,
-            id: '',
-        });
-    };
-
-    const handleUpdateVolunteer = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (updatingVolunteer) {
-            setVolunteers((prevVolunteers) =>
-                prevVolunteers.map((volunteer) =>
-                    volunteer.id === updatingVolunteer.id
-                     ? { 
-                        ...volunteer, 
-                        name: newVolunteer.name || volunteer.name,
-                        avatar: newVolunteer.avatar || volunteer.avatar,
-                        hero_project: newVolunteer.hero_project || volunteer.hero_project,
-                        notes: newVolunteer.notes || volunteer.notes,
-                        email: newVolunteer.email || volunteer.email,
-                        phone: newVolunteer.phone || volunteer.phone,
-                        rating: newVolunteer.rating || volunteer.rating,
-                        status: newVolunteer.status === undefined ? volunteer.status : newVolunteer.status,
-                        id: newVolunteer.id || volunteer.id, 
-                        }
-                    
-                    : volunteer
-                )
-            );
-            setUpdatingVolunteer(null);
+        try {
+            const response = await axios.post('http://localhost:5000/api/bog/users', newVolunteer);
+            setVolunteers(prevVolunteers => [...prevVolunteers, response.data]);
             setNewVolunteer({
                 name: '',
                 avatar: '',
@@ -91,12 +56,94 @@ const VolunteerTable: React.FC = () => {
                 email: '',
                 phone: '',
                 rating: '',
-                status: true,
+                status: false,
                 id: '',
             });
+        }   catch (error) {
+            console.error('error adding volunteer:', error);
         }
+        // console.log('Adding Volunteer...', newVolunteer);
+        // setVolunteers(prevVolunteers => [...prevVolunteers, { ...newVolunteer, id: String(Date.now()) }]);
+        // setNewVolunteer({
+        //     name: '',
+        //     avatar: '',
+        //     hero_project: '',
+        //     notes: '',
+        //     email: '',
+        //     phone: '',
+        //     rating: '',
+        //     status: false,
+        //     id: '',
+        // });
     };
 
+    const handleUpdateVolunteer = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (updatingVolunteer) {
+            try {
+                const response = await axios.put(`http://localhost:5000/api/bog/users/${updatingVolunteer.id}`, newVolunteer);
+                setVolunteers((prevVolunteers) =>
+                    prevVolunteers.map((volunteer) =>
+                        volunteer.id === updatingVolunteer.id ? response.data : volunteer
+                        )
+                    );
+                    setUpdatingVolunteer(null);
+                    setNewVolunteer({
+                        name: '',
+                        avatar: '',
+                        hero_project: '',
+                        notes: '',
+                        email: '',
+                        phone: '',
+                        rating: '',
+                        status: false,
+                        id: '',
+                    });
+            } catch (error) {
+                console.error('error updating volunteer: ', error);
+            }
+        }
+    };
+            // setVolunteers((prevVolunteers) =>
+            //     prevVolunteers.map((volunteer) =>
+            //         volunteer.id === updatingVolunteer.id
+            //          ? { 
+            //             ...volunteer, 
+            //             name: newVolunteer.name || volunteer.name,
+            //             avatar: newVolunteer.avatar || volunteer.avatar,
+            //             hero_project: newVolunteer.hero_project || volunteer.hero_project,
+            //             notes: newVolunteer.notes || volunteer.notes,
+            //             email: newVolunteer.email || volunteer.email,
+            //             phone: newVolunteer.phone || volunteer.phone,
+            //             rating: newVolunteer.rating || volunteer.rating,
+            //             status: newVolunteer.status === undefined ? volunteer.status : newVolunteer.status,
+            //             id: newVolunteer.id || volunteer.id, 
+            //             }
+                    
+            //         : volunteer
+            //     )
+    //         setUpdatingVolunteer(null);
+    //         setNewVolunteer({
+    //             name: '',
+    //             avatar: '',
+    //             hero_project: '',
+    //             notes: '',
+    //             email: '',
+    //             phone: '',
+    //             rating: '',
+    //             status: false,
+    //             id: '',
+    //         });
+    //     }
+    // };
+    const handleDeleteVolunteer = async (id: string) => {
+        try {
+            await axios.delete(`http://localhost:5000/api/bog/users/${id}`);
+            setVolunteers(prevVolunteers => prevVolunteers.filter(volunteer => volunteer.id !== id));
+        } catch (error) {
+            console.error('error deleting volunteer:', error);
+        }
+    };
 
     return (
         <div className='table-container'>
@@ -151,7 +198,7 @@ const VolunteerTable: React.FC = () => {
                         value={newVolunteer.rating}
                         onChange={(e) => setNewVolunteer({ ...newVolunteer, rating: e.target.value})}
                     />
-                    <label htmlFor='status'>Status:</label>
+                    <label htmlFor='status'>Active?</label>
                     <input
                         type='radio'
                         id='status'
@@ -197,6 +244,7 @@ const VolunteerTable: React.FC = () => {
                             <td>{volunteer.status ? 'Active' : 'Inactive'}</td>
                             <td>
                                 <button onClick={() => setUpdatingVolunteer(volunteer)}>Update</button>
+                                <button onClick={() => handleDeleteVolunteer(volunteer.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
