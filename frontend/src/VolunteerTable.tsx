@@ -3,7 +3,6 @@ import axios from 'axios';
 import './VolunteerTable.css';
 
 interface Volunteer {
-    id: string;
     name: string;
     avatar: string;
     hero_project: string;
@@ -12,10 +11,25 @@ interface Volunteer {
     phone: string;
     rating: string;
     status: boolean;
+    id: string;
 }
+
+//form to add new ppl
 
 const VolunteerTable: React.FC = () => {
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+    const [newVolunteer, setNewVolunteer] = useState<Volunteer>({
+        name: '',
+        avatar: '',
+        hero_project: '',
+        notes: '',
+        email: '',
+        phone: '',
+        rating: '',
+        status: false,
+        id: '',
+    });
+    const [updatingVolunteer, setUpdatingVolunteer] = useState<Volunteer | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,10 +41,134 @@ const VolunteerTable: React.FC = () => {
             }
         };
         fetchData();
-    })
+    }, []);
+
+    const handleAddVolunteer = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log('Adding Volunteer...', newVolunteer);
+        setVolunteers(prevVolunteers => [...prevVolunteers, { ...newVolunteer, id: String(Date.now()) }]);
+        setNewVolunteer({
+            name: '',
+            avatar: '',
+            hero_project: '',
+            notes: '',
+            email: '',
+            phone: '',
+            rating: '',
+            status: false,
+            id: '',
+        });
+    };
+
+    const handleUpdateVolunteer = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (updatingVolunteer) {
+            setVolunteers((prevVolunteers) =>
+                prevVolunteers.map((volunteer) =>
+                    volunteer.id === updatingVolunteer.id
+                     ? { 
+                        ...volunteer, 
+                        name: newVolunteer.name || volunteer.name,
+                        avatar: newVolunteer.avatar || volunteer.avatar,
+                        hero_project: newVolunteer.hero_project || volunteer.hero_project,
+                        notes: newVolunteer.notes || volunteer.notes,
+                        email: newVolunteer.email || volunteer.email,
+                        phone: newVolunteer.phone || volunteer.phone,
+                        rating: newVolunteer.rating || volunteer.rating,
+                        status: newVolunteer.status === undefined ? volunteer.status : newVolunteer.status,
+                        id: newVolunteer.id || volunteer.id, 
+                        }
+                    
+                    : volunteer
+                )
+            );
+            setUpdatingVolunteer(null);
+            setNewVolunteer({
+                name: '',
+                avatar: '',
+                hero_project: '',
+                notes: '',
+                email: '',
+                phone: '',
+                rating: '',
+                status: true,
+                id: '',
+            });
+        }
+    };
+
 
     return (
         <div className='table-container'>
+            <h2>{updatingVolunteer ? 'Update Volunteer' : 'Add Volunteer'}</h2>
+                <form onSubmit={updatingVolunteer ? handleUpdateVolunteer : handleAddVolunteer}>
+                    <label htmlFor='name'>Name:</label>
+                    <input
+                        type='text'
+                        id='name'
+                        value={newVolunteer.name}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, name: e.target.value})}
+                    />
+                    <label htmlFor='avatar'>Avatar:</label>
+                    <input
+                        type='text'
+                        id='avatar'
+                        value={newVolunteer.avatar}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, avatar: e.target.value})}
+                    />
+                    <label htmlFor='hero_project'>Hero Project:</label>
+                    <input
+                        type='text'
+                        id='hero_project'
+                        value={newVolunteer.hero_project}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, hero_project: e.target.value})}
+                    />
+                    <label htmlFor='notes'>Notes:</label>
+                    <input
+                        type='text'
+                        id='notes'
+                        value={newVolunteer.notes}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, notes: e.target.value})}
+                    />
+                    <label htmlFor='email'>Email:</label>
+                    <input
+                        type='text'
+                        id='email'
+                        value={newVolunteer.email}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, email: e.target.value})}
+                    />
+                    <label htmlFor='phone'>Phone:</label>
+                    <input
+                        type='text'
+                        id='phone'
+                        value={newVolunteer.phone}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, phone: e.target.value})}
+                    />
+                    <label htmlFor='rating'>Rating:</label>
+                    <input
+                        type='text'
+                        id='rating'
+                        value={newVolunteer.rating}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, rating: e.target.value})}
+                    />
+                    <label htmlFor='status'>Status:</label>
+                    <input
+                        type='radio'
+                        id='status'
+                        checked={newVolunteer.status}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, status: e.target.checked})}
+                    />
+                    <label htmlFor='customId'>ID:</label>
+                    <input
+                        type='text'
+                        id='customId'
+                        value={newVolunteer.id}
+                        onChange={(e) => setNewVolunteer({ ...newVolunteer, id: e.target.value})}
+                    />
+                    <button type='submit'>
+                        {updatingVolunteer ? 'Update Volunteer' : 'Add Volunteer'}
+                    </button>
+                </form>
             <table className='volunteer-table'>
                 <thead>
                     <tr>
@@ -57,10 +195,16 @@ const VolunteerTable: React.FC = () => {
                             <td>{volunteer.phone}</td>
                             <td>{volunteer.rating}</td>
                             <td>{volunteer.status ? 'Active' : 'Inactive'}</td>
+                            <td>
+                                <button onClick={() => setUpdatingVolunteer(volunteer)}>Update</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <div>
+                
+            </div>
         </div>
     );
 };

@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <h1>Volunteer Information</h1>
-      <VolunteerTable />
+      <VolunteerTable key = {Date.now()} />
     </div>
   );
 }
