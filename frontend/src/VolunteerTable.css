@@ -47,6 +47,7 @@ label {
 input, button, textarea {
     margin-bottom: 1em;
     padding: .5em;
+    border-radius: 8px;
 }
 
 button {
@@ -96,6 +97,9 @@ button:hover {
     max-height: 50px;
 }
 
+.volunteer-table th {
+    cursor: pointer;
+}
 .volunteer-actions button {
     margin-right: 0.5em;
     background-color: #f44336;
@@ -111,4 +115,13 @@ button:hover {
 
 .volunteer-actions button:hover {
     background-color: #d32f2f;
+}
+
+#heroProjectFilter {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding-left: 10px
+    
 }

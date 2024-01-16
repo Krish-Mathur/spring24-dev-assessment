@@ -17,6 +17,18 @@ interface Volunteer {
 //form to add new ppl
 
 const VolunteerTable: React.FC = () => {
+    //adding sort+filter for hero_project
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+    const [filterValue, setFilterValue] = useState<string>('');
+
+    const handleSort = () => {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    };
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterValue(e.target.value);
+    };
+
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
     const [newVolunteer, setNewVolunteer] = useState<Volunteer>({
         name: '',
@@ -81,12 +93,24 @@ const VolunteerTable: React.FC = () => {
     const indexOfLastVolunteer = (currentPage + 1) * itemsPerPage;
     const indexOfFirstVolunteer = indexOfLastVolunteer - itemsPerPage;
     const paginatedVolunteers = volunteers.slice(indexOfFirstVolunteer, indexOfLastVolunteer);
+   
+    const filteredAndSortedVolunteers = paginatedVolunteers
+        .filter((volunteer) => volunteer.hero_project.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase()))
+        .sort((a, b) => {
+            if (sortOrder === 'asc') {
+                return a.hero_project.localeCompare(b.hero_project);
+            } else if (sortOrder === 'desc') {
+                return b.hero_project.localeCompare(a.hero_project);
+            }
+            return 0
+        });
+
+
 
     const handleUpdateVolunteer = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (updatingVolunteer) {
             try {
-                // Construct the payload for the PUT request dynamically
                 const payload = {
                     name: newVolunteer.name || updatingVolunteer.name,
                     avatar: newVolunteer.avatar || updatingVolunteer.avatar,
@@ -235,12 +259,19 @@ const VolunteerTable: React.FC = () => {
                         {updatingVolunteer ? 'Update Volunteer' : 'Add Volunteer'}
                     </button>
                 </form>
+                <label htmlFor='heroProjectFilter'>Filter by Hero Project:</label>
+                    <input
+                        type='text'
+                        id='heroProjectFilter'
+                        value={filterValue}
+                        onChange={handleFilterChange}
+                    />
             <table className='volunteer-table'>
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Avatar</th>
-                        <th>Hero Project</th>
+                        <th onClick={handleSort}>Hero Project (click me){sortOrder && `(${sortOrder === 'asc' ? '↑' : '↓' })`}</th>
                         <th>Notes</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -249,7 +280,7 @@ const VolunteerTable: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedVolunteers.map((volunteer) => (
+                    {filteredAndSortedVolunteers.map((volunteer) => (
                         <tr key= {volunteer.id}>
                             <td>{volunteer.name}</td>
                             <td>
