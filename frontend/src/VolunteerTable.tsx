@@ -75,19 +75,7 @@ const VolunteerTable: React.FC = () => {
         }   catch (error) {
             console.error('error adding volunteer:', error);
         }
-        // console.log('Adding Volunteer...', newVolunteer);
-        // setVolunteers(prevVolunteers => [...prevVolunteers, { ...newVolunteer, id: String(Date.now()) }]);
-        // setNewVolunteer({
-        //     name: '',
-        //     avatar: '',
-        //     hero_project: '',
-        //     notes: '',
-        //     email: '',
-        //     phone: '',
-        //     rating: '',
-        //     status: false,
-        //     id: '',
-        // });
+
         setCurrentPage(Math.ceil((volunteers.length + 1) / itemsPerPage) - 1);
     };
     const indexOfLastVolunteer = (currentPage + 1) * itemsPerPage;
@@ -147,38 +135,6 @@ const VolunteerTable: React.FC = () => {
             }
         }
     };
-            // setVolunteers((prevVolunteers) =>
-            //     prevVolunteers.map((volunteer) =>
-            //         volunteer.id === updatingVolunteer.id
-            //          ? { 
-            //             ...volunteer, 
-            //             name: newVolunteer.name || volunteer.name,
-            //             avatar: newVolunteer.avatar || volunteer.avatar,
-            //             hero_project: newVolunteer.hero_project || volunteer.hero_project,
-            //             notes: newVolunteer.notes || volunteer.notes,
-            //             email: newVolunteer.email || volunteer.email,
-            //             phone: newVolunteer.phone || volunteer.phone,
-            //             rating: newVolunteer.rating || volunteer.rating,
-            //             status: newVolunteer.status === undefined ? volunteer.status : newVolunteer.status,
-            //             id: newVolunteer.id || volunteer.id, 
-            //             }
-                    
-            //         : volunteer
-            //     )
-    //         setUpdatingVolunteer(null);
-    //         setNewVolunteer({
-    //             name: '',
-    //             avatar: '',
-    //             hero_project: '',
-    //             notes: '',
-    //             email: '',
-    //             phone: '',
-    //             rating: '',
-    //             status: false,
-    //             id: '',
-    //         });
-    //     }
-    // };
     const handleDeleteVolunteer = async (id: string) => {
         try {
             await axios.delete(`http://localhost:5000/api/bog/users/${id}`);
