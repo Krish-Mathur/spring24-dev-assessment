@@ -8,14 +8,37 @@ h2 {
     margin-bottom: 1em;
 }
 
-form {
-    display: flex;
+.form-container {
     max-width: 800px;
-    align-items: center;
-    padding-left: 400px;
-    flex-direction: column;
     margin-bottom: 1em;
-}
+  }
+  
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  form label {
+    margin-bottom: 20px;
+  }
+  
+  form label[for="rating"],
+  form input[id="rating"] {
+    display: flex;
+    align-items: center;
+  }
+  form label[for="status"]
+  form input[id ="status"] {
+    display: flex;
+    align-items: center;
+  }
+  
+  form button {
+    order: 1;
+    margin-top: 0em;
+  }
+
 
 label {
     margin-bottom: 0.5em;
@@ -23,7 +46,7 @@ label {
 
 input, button, textarea {
     margin-bottom: 1em;
-    padding: 0.5em;
+    padding: .5em;
 }
 
 button {

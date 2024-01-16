@@ -29,7 +29,7 @@ app.put('/api/bog/users/:id', (req, res) => {
   const updatedVolunteer = req.body;
 
   volunteers = volunteers.map(volunteer =>
-      volunteers.id === volunteerId ? { ...volunteer, ...updatedVolunteer } : volunteer
+      volunteer.id === volunteerId ? { ...volunteer, ...updatedVolunteer } : volunteer
     );
   res.json(updatedVolunteer);
 });
