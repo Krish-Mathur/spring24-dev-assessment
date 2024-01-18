@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './VolunteerTable.css';
+import { useAuth0 } from '@auth0/auth0-react';
+
 
 interface Volunteer {
     name: string;
@@ -17,6 +19,9 @@ interface Volunteer {
 //form to add new ppl
 
 const VolunteerTable: React.FC = () => {
+
+    const { isAuthenticated, } = useAuth0();
+
     //adding sort+filter for hero_project
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
     const [filterValue, setFilterValue] = useState<string>('');
@@ -211,7 +216,10 @@ const VolunteerTable: React.FC = () => {
                         value={newVolunteer.id}
                         onChange={(e) => setNewVolunteer({ ...newVolunteer, id: e.target.value || newVolunteer.id })}
                     />
-                    <button type='submit'>
+                    <button type='submit'
+                     disabled={!isAuthenticated} 
+                     
+                    >
                         {updatingVolunteer ? 'Update Volunteer' : 'Add Volunteer'}
                     </button>
                 </form>
@@ -249,8 +257,8 @@ const VolunteerTable: React.FC = () => {
                             <td>{volunteer.rating}</td>
                             <td>{volunteer.status ? 'Active' : 'Inactive'}</td>
                             <td>
-                                <button onClick={() => setUpdatingVolunteer(volunteer)}>Update</button>
-                                <button onClick={() => handleDeleteVolunteer(volunteer.id)}>Delete</button>
+                                <button  disabled={!isAuthenticated} onClick={() => setUpdatingVolunteer(volunteer)}>Update</button>
+                                <button  disabled={!isAuthenticated} onClick={() => handleDeleteVolunteer(volunteer.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
